@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيادة علاج طبيعي - حجز المواعيد</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background-color: #f8fafb;
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(3, 105, 161, 0.15);
+        }
+        
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 8px 0 0 0;
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        
+        .header p.location {
+            font-size: 14px;
+            opacity: 0.8;
+            margin: 4px 0 0 0;
+        }
+        
+        .language-selector {
+            padding: 16px 20px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e2e8f0;
+            color: #334155;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn.active {
+            background-color: #0369a1;
+            color: white;
+        }
+        
+        .lang-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .main-content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+        
+        .form-card {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-card h2 {
+            margin-top: 0;
+            margin-bottom: 28px;
+            color: #0369a1;
+            font-size: 22px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #0369a1;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: #0369a1;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        .date-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+        }
+        
+        .date-btn, .time-btn {
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            background-color: white;
+            color: #334155;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .date-btn.active, .time-btn.active {
+            border-color: #0369a1;
+            background-color: #0369a1;
+            color: white;
+        }
+        
+        .date-btn.selected {
+            background-color: #f0f9ff;
+            border-color: #0369a1;
+            color: #0369a1;
+        }
+        
+        .summary-box {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .summary-box.highlight {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0369a1;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .summary-label {
+            color: #64748b;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .summary-box.highlight .summary-value {
+            color: #0369a1;
+        }
+        
+        .success-container {
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: #16a34a;
+        }
+        
+        .success-container h2 {
+            color: #16a34a;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .success-container p {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+        
+        .success-summary {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+        }
+        
+        .success-summary p {
+            margin: 8px 0;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        .success-summary p.subtitle {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        
+        .success-summary p.time {
+            color: #0369a1;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 12px;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .form-card {
+                padding: 24px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+        
+        function AppointmentScheduler() {
+            const [language, setLanguage] = useState('ar');
+            const [step, setStep] = useState('info');
+            const [formData, setFormData] = useState({
+                name: '',
+                phone: '',
+                complaint: '',
+                duration: '',
+                notes: ''
+            });
+            const [selectedTime, setSelectedTime] = useState(null);
+            const [selectedDate, setSelectedDate] = useState(null);
+
+            const translations = {
+                ar: {
+                    title: 'عيادة علاج طبيعي',
+                    subtitle: 'حجز موعدك مع متخصصينا',
+                    location: 'باشاك شهير، اسطنبول',
+                    phone_label: 'رقم الجوال',
+                    name_label: 'الاسم الكامل',
+                    complaint_label: 'ما نوع الألم أو المشكلة؟',
+                    duration_label: 'متى بدأت المشكلة؟',
+                    notes_label: 'ملاحظات إضافية',
+                    select_time: 'اختر موعد الجلسة',
+                    confirm_booking: 'تأكيد الحجز',
+                    next: 'التالي',
+                    back: 'رجوع',
+                    success: 'تم حجز موعدك بنجاح!',
+                    confirmation_msg: 'سيتصل بك فريقنا قريباً لتأكيد الموعد',
+                    available_slots: 'الفترات المتاحة',
+                    choose_date: 'اختر التاريخ',
+                    booking_summary: 'ملخص الحجز',
+                    patient_info: 'معلومات المريض',
+                    appointment_info: 'معلومات الموعد',
+                    complaints: ['آلام الظهر', 'آلام الرقبة', 'آلام الركبة', 'إصابة رياضية', 'إعادة تأهيل'],
+                    durations: ['أقل من أسبوع', '1-2 أسبوع', '2-4 أسابيع', 'شهر', 'أكثر من شهر'],
+                    selectOption: 'اختر',
+                    book_another: 'احجز موعد جديد'
+                },
+                en: {
+                    title: 'Physical Therapy Clinic',
+                    subtitle: 'Schedule Your Appointment',
+                    location: 'Başakşehir, Istanbul',
+                    phone_label: 'Phone Number',
+                    name_label: 'Full Name',
+                    complaint_label: 'What is your complaint or pain?',
+                    duration_label: 'When did the problem start?',
+                    notes_label: 'Additional notes',
+                    select_time: 'Select Appointment Time',
+                    confirm_booking: 'Confirm Booking',
+                    next: 'Next',
+                    back: 'Back',
+                    success: 'Appointment booked successfully!',
+                    confirmation_msg: 'Our team will contact you soon to confirm your appointment',
+                    available_slots: 'Available Time Slots',
+                    choose_date: 'Choose Date',
+                    booking_summary: 'Booking Summary',
+                    patient_info: 'Patient Information',
+                    appointment_info: 'Appointment Information',
+                    complaints: ['Back Pain', 'Neck Pain', 'Knee Pain', 'Sports Injury', 'Rehabilitation'],
+                    durations: ['Less than a week', '1-2 weeks', '2-4 weeks', '1 month', 'More than 1 month'],
+                    selectOption: 'Select',
+                    book_another: 'Book Another Appointment'
+                },
+                tr: {
+                    title: 'Fizyoterapist Kliniği',
+                    subtitle: 'Randevunuzu Hazırlayın',
+                    location: 'Başakşehir, İstanbul',
+                    phone_label: 'Telefon Numarası',
+                    name_label: 'Ad Soyad',
+                    complaint_label: 'Ağrı veya sorun nedir?',
+                    duration_label: 'Problem ne zaman başladı?',
+                    notes_label: 'Ek notlar',
+                    select_time: 'Randevu Saatini Seçin',
+                    confirm_booking: 'Randevuyu Onayla',
+                    next: 'İleri',
+                    back: 'Geri',
+                    success: 'Randevunuz başarıyla kaydedildi!',
+                    confirmation_msg: 'Ekibimiz randevunuzu onaylamak için sizinle iletişime geçecektir',
+                    available_slots: 'Uygun Saatler',
+                    choose_date: 'Tarihi Seçin',
+                    booking_summary: 'Randevu Özeti',
+                    patient_info: 'Hasta Bilgileri',
+                    appointment_info: 'Randevu Bilgileri',
+                    complaints: ['Bel ağrısı', 'Boyun ağrısı', 'Diz ağrısı', 'Spor yaralanması', 'Rehabilitasyon'],
+                    durations: ['Bir haftadan az', '1-2 hafta', '2-4 hafta', '1 ay', 'Bir aydan fazla'],
+                    selectOption: 'Seçin',
+                    book_another: 'Yeni Randevu Al'
+                }
+            };
+
+            const t = translations[language];
+            const isRTL = language === 'ar';
+            const timeSlots = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+            
+            const upcomingDates = Array.from({ length: 7 }, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() + i + 1);
+                return date.toISOString().split('T')[0];
+            });
+
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setFormData(prev => ({ ...prev, [name]: value }));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (formData.name && formData.phone && formData.complaint) {
+                    setStep('time');
+                }
+            };
+
+            const handleTimeSelect = (date, time) => {
+                setSelectedDate(date);
+                setSelectedTime(time);
+                setStep('confirm');
+            };
+
+            const handleConfirm = () => {
+                setStep('success');
+            };
+
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr + 'T00:00:00');
+                if (language === 'ar') {
+                    return new Intl.DateTimeFormat('ar-SA', { weekday: 'long', month: 'long', day: 'numeric' }).format(date);
+                } else if (language === 'tr') {
+                    return new Intl.DateTimeFormat('tr-TR', { weekday: 'long', month: 'long', day: 'numeric' }).format(date);
+                } else {
+                    return new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(date);
+                }
+            };
+
+            return (
+                <div style={{ direction: isRTL ? 'rtl' : 'ltr' }} className="container">
+                    {/* Header */}
+                    <div className="header">
+                        <div className="header-content">
+                            <div className="header-title-row">
+                                <span style={{ fontSize: '32px' }}>⚕️</span>
+                                <h1>{t.title}</h1>
+                            </div>
+                            <p>{t.subtitle}</p>
+                            <p className="location">📍 {t.location}</p>
+                        </div>
+                    </div>
+
+                    {/* Language Selector */}
+                    <div className="language-selector">
+                        {[
+                            { code: 'ar', label: 'العربية' },
+                            { code: 'en', label: 'English' },
+                            { code: 'tr', label: 'Türkçe' }
+                        ].map(lang => (
+                            <button
+                                key={lang.code}
+                                className={`lang-btn ${language === lang.code ? 'active' : ''}`}
+                                onClick={() => setLanguage(lang.code)}
+                            >
+                                {lang.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="main-content">
+                        {step === 'info' && (
+                            <form onSubmit={handleSubmit} className="form-card">
+                                <h2>{t.patient_info}</h2>
+
+                                <div className="form-group">
+                                    <label>{t.name_label} *</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                        placeholder={language === 'ar' ? 'محمد أحمد' : 'Your Name'}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>{t.phone_label} *</label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        required
+                                        placeholder="+90 5xx xxx xxxx"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>{t.complaint_label} *</label>
+                                    <select
+                                        name="complaint"
+                                        value={formData.complaint}
+                                        onChange={handleInputChange}
+                                        required
+                                    >
+                                        <option value="">-- {t.selectOption} --</option>
+                                        {t.complaints.map((option, i) => (
+                                            <option key={i} value={option}>{option}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>{t.duration_label}</label>
+                                    <select
+                                        name="duration"
+                                        value={formData.duration}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="">-- {t.selectOption} --</option>
+                                        {t.durations.map((option, i) => (
+                                            <option key={i} value={option}>{option}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>{t.notes_label}</label>
+                                    <textarea
+                                        name="notes"
+                                        value={formData.notes}
+                                        onChange={handleInputChange}
+                                        placeholder={language === 'ar' ? 'أي معلومات إضافية...' : 'Any additional information...'}
+                                    />
+                                </div>
+
+                                <button type="submit" className="btn btn-primary" style={{ marginTop: '8px' }}>
+                                    {t.next} →
+                                </button>
+                            </form>
+                        )}
+
+                        {step === 'time' && (
+                            <div className="form-card">
+                                <h2>{t.select_time}</h2>
+
+                                <div style={{ marginBottom: '32px' }}>
+                                    <h3 style={{ marginBottom: '16px', color: '#1e293b', fontSize: '16px', fontWeight: '600' }}>
+                                        {t.choose_date}
+                                    </h3>
+                                    <div className="date-grid">
+                                        {upcomingDates.map((date) => (
+                                            <button
+                                                key={date}
+                                                className={`date-btn ${selectedDate === date ? 'selected' : ''}`}
+                                                onClick={() => {
+                                                    setSelectedDate(date);
+                                                    setSelectedTime(null);
+                                                }}
+                                                type="button"
+                                            >
+                                                {formatDate(date).split(',')[0]} <br /> {date.split('-')[2]}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {selectedDate && (
+                                    <div>
+                                        <h3 style={{ marginBottom: '16px', color: '#1e293b', fontSize: '16px', fontWeight: '600' }}>
+                                            {t.available_slots}
+                                        </h3>
+                                        <div className="time-grid">
+                                            {timeSlots.map((time) => (
+                                                <button
+                                                    key={time}
+                                                    className={`time-btn ${selectedTime === time ? 'active' : ''}`}
+                                                    onClick={() => handleTimeSelect(selectedDate, time)}
+                                                    type="button"
+                                                >
+                                                    🕐 {time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="button-group" style={{ marginTop: '32px' }}>
+                                    <button
+                                        onClick={() => { setStep('info'); setSelectedDate(null); setSelectedTime(null); }}
+                                        className="btn btn-secondary"
+                                        type="button"
+                                    >
+                                        {t.back}
+                                    </button>
+                                    <button
+                                        onClick={() => setStep('confirm')}
+                                        disabled={!selectedTime}
+                                        className="btn btn-primary"
+                                        type="button"
+                                    >
+                                        {t.next} →
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 'confirm' && (
+                            <div className="form-card">
+                                <h2>{t.booking_summary}</h2>
+
+                                <div className="summary-box">
+                                    <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#1e293b', fontSize: '14px', fontWeight: '600' }}>
+                                        {t.patient_info}
+                                    </h3>
+                                    <div className="summary-row">
+                                        <span className="summary-label">{t.name_label}</span>
+                                        <span className="summary-value">{formData.name}</span>
+                                    </div>
+                                    <div className="summary-row">
+                                        <span className="summary-label">{t.phone_label}</span>
+                                        <span className="summary-value">{formData.phone}</span>
+                                    </div>
+                                    <div className="summary-row">
+                                        <span className="summary-label">{t.complaint_label}</span>
+                                        <span className="summary-value">{formData.complaint}</span>
+                                    </div>
+                                </div>
+
+                                <div className="summary-box highlight">
+                                    <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#1e293b', fontSize: '14px', fontWeight: '600' }}>
+                                        {t.appointment_info}
+                                    </h3>
+                                    <div className="summary-row">
+                                        <span className="summary-label">📅</span>
+                                        <span className="summary-value">{formatDate(selectedDate)}</span>
+                                    </div>
+                                    <div className="summary-row">
+                                        <span className="summary-label">🕐</span>
+                                        <span className="summary-value">{selectedTime}</span>
+                                    </div>
+                                </div>
+
+                                <div className="button-group">
+                                    <button
+                                        onClick={() => setStep('time')}
+                                        className="btn btn-secondary"
+                                        type="button"
+                                    >
+                                        {t.back}
+                                    </button>
+                                    <button
+                                        onClick={handleConfirm}
+                                        className="btn btn-primary"
+                                        type="button"
+                                    >
+                                        {t.confirm_booking} ✓
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 'success' && (
+                            <div className="form-card success-container">
+                                <div className="success-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                </div>
+
+                                <h2>{t.success}</h2>
+                                <p>{t.confirmation_msg}</p>
+
+                                <div className="success-summary">
+                                    <p>{formData.name}</p>
+                                    <p className="subtitle">{formData.phone}</p>
+                                    <p className="time">
+                                        {formatDate(selectedDate)} - {selectedTime}
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setStep('info');
+                                        setFormData({ name: '', phone: '', complaint: '', duration: '', notes: '' });
+                                        setSelectedDate(null);
+                                        setSelectedTime(null);
+                                    }}
+                                    className="btn btn-primary"
+                                    type="button"
+                                    style={{ width: '100%' }}
+                                >
+                                    {t.book_another}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<AppointmentScheduler />, document.getElementById('root'));
+    </script>
+</body>
+</html>

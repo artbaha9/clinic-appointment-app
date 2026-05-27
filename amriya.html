@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مريم ❤️ أمير</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, -50px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .app {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blob-bg {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: blob 8s infinite;
+            top: -100px;
+            right: -100px;
+            z-index: 0;
+        }
+
+        .blob-bg-2 {
+            position: fixed;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 182, 193, 0.1);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: blob 10s infinite reverse;
+            bottom: -50px;
+            left: -50px;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Choice Screen */
+        .choice-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            min-height: calc(100vh - 200px);
+        }
+
+        .heart {
+            font-size: 120px;
+            animation: float 3s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        .choice-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .choice-btn {
+            padding: 30px 50px;
+            font-size: 28px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.8s ease;
+        }
+
+        .choice-btn-maryam {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: white;
+        }
+
+        .choice-btn-amir {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            animation: slideDown 0.8s ease;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        /* Form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            animation: slideDown 0.8s ease;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Info Cards */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.2) 0%, rgba(196, 69, 105, 0.2) 100%);
+            border-left: 5px solid #ff6b9d;
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.7s ease;
+        }
+
+        .info-card h4 {
+            color: #ff6b9d;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            color: white;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            animation: slideDown 0.5s ease;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .responses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .response-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            animation: slideUp 0.6s ease;
+        }
+
+        .response-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .response-item p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .response-item .time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        /* Challenges Grid */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .challenge-card {
+            padding: 30px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .challenge-1 { background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%); }
+        .challenge-2 { background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%); }
+        .challenge-3 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .challenge-4 { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .challenge-5 { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+        .challenge-6 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+        .challenge-card h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .challenge-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .choice-btn {
+                padding: 20px 30px;
+                font-size: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .challenge-card {
+                padding: 20px;
+            }
+
+            .heart {
+                font-size: 80px;
+            }
+        }
+
+        .logo-text {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b9d, #ffa751);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [screen, setScreen] = useState('choice');
+            const [user, setUser] = useState(null);
+            const [activeTab, setActiveTab] = useState('questions');
+            const [responses, setResponses] = useState([]);
+            const [showSuccess, setShowSuccess] = useState(false);
+            const [adminCode, setAdminCode] = useState('');
+            const [isAdmin, setIsAdmin] = useState(false);
+
+            // Load responses from localStorage
+            useEffect(() => {
+                const saved = localStorage.getItem('responses');
+                if (saved) {
+                    setResponses(JSON.parse(saved));
+                }
+            }, []);
+
+            // Save responses to localStorage
+            useEffect(() => {
+                localStorage.setItem('responses', JSON.stringify(responses));
+            }, [responses]);
+
+            const handleAddResponse = (question, answer) => {
+                const newResponse = {
+                    id: Date.now(),
+                    question,
+                    answer,
+                    timestamp: new Date().toLocaleString('ar-SA')
+                };
+                setResponses([...responses, newResponse]);
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 3000);
+            };
+
+            const handleCheckAdmin = (code) => {
+                if (code === '1515') {
+                    setIsAdmin(true);
+                    setUser('admin');
+                    setScreen('main');
+                } else {
+                    alert('كود خاطئ! 🔐');
+                }
+            };
+
+            if (screen === 'choice') {
+                return (
+                    <div className="app">
+                        <div className="blob-bg"></div>
+                        <div className="blob-bg-2"></div>
+                        <div className="container">
+                            <div className="header">
+                                <h1>💕 مريم و أمير 💕</h1>
+                                <p>تطبيق حب ومشاعر وألغاز!</p>
+                            </div>
+                            <div className="choice-screen">
+                                <div className="heart">❤️</div>
+                                <div className="choice-buttons">
+                                    <button 
+                                        className="choice-btn choice-btn-maryam"
+                                        onClick={() => { setUser('maryam'); setScreen('main'); }}
+                                    >
+                                        🌹 أنا مريم
+                                    </button>
+                                    <button 
+                                        className="choice-btn choice-btn-amir"
+                                        onClick={() => { setScreen('admin-login'); }}
+                                    >
+                                        👑 أنا أمير
+                                    </button>
+                                </div>
+                                <div className="info-cards">
+                                    <div className="info-card">
+                                        <h4>💌 للمريا الحلوة</h4>
+                                        <p>أسئلة وألغاز وتحديات من قلب!</p>
+                                    </div>
+                                    <div className="info-card">
+                                        <h4>👑 للأمير</h4>
+                                        <p>شوف كل إجابات مريم الحلوة!</p>
+                                    </div>
+                                    <div className="info-card">
+                                        <h4>✨ مجرد حب</h4>
+                                        <p>طريقة حلوة لقول مشاعرك!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (screen === 'admin-login') {
+                return (
+                    <div className="app">
+                        <div className="blob-bg"></div>
+                        <div className="blob-bg-2"></div>
+                        <div className="container">
+                            <button className="back-btn" onClick={() => setScreen('choice')}>← رجوع</button>
+                            <div className="form-container" style={{ maxWidth: '400px', margin: '100px auto' }}>
+                                <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#667eea' }}>🔐 دخول أمير</h2>
+                                <div className="form-group">
+                                    <label>ادخل الكود السري:</label>
+                                    <input 
+                                        type="password" 
+                                        placeholder="1515"
+                                        value={adminCode}
+                                        onChange={(e) => setAdminCode(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleCheckAdmin(adminCode)}
+                                    />
+                                </div>
+                                <button 
+                                    className="submit-btn"
+                                    onClick={() => handleCheckAdmin(adminCode)}
+                                >
+                                    دخول
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (screen === 'main' && user === 'maryam') {
+                return <MaryamScreen activeTab={activeTab} setActiveTab={setActiveTab} onAddResponse={handleAddResponse} showSuccess={showSuccess} setScreen={setScreen} />;
+            }
+
+            if (screen === 'main' && isAdmin) {
+                return <AdminPanel responses={responses} setScreen={setScreen} />;
+            }
+        }
+
+        function MaryamScreen({ activeTab, setActiveTab, onAddResponse, showSuccess, setScreen }) {
+            const [answers, setAnswers] = useState({});
+
+            const sections = {
+                questions: {
+                    title: '❓ الأسئلة',
+                    items: [
+                        { id: 1, text: 'ما أول شيء تحب فيّ؟', icon: '💖' },
+                        { id: 2, text: 'أحلم بماذا معي؟', icon: '✨' },
+                        { id: 3, text: 'متى شعرتِ بحبك لي؟', icon: '💗' },
+                    ]
+                },
+                puzzles: {
+                    title: '🧩 الألغاز',
+                    items: [
+                        { id: 1, text: 'أين تحبين أن تكونين معي؟', icon: '🌍' },
+                        { id: 2, text: 'ما لونك المفضل؟', icon: '🎨' },
+                        { id: 3, text: 'كم مرة فكرتِ فيّ اليوم؟', icon: '🤔' },
+                    ]
+                },
+                challenges: {
+                    title: '⭐ التحديات',
+                    items: [
+                        { id: 1, text: 'اكتبي أجمل كلمة تحب أن أسمعها', icon: '🎯' },
+                        { id: 2, text: 'وصفي لي يومك الجميل', icon: '📅' },
+                        { id: 3, text: 'ما أكثر شيء تحبينه فيّ؟', icon: '💝' },
+                    ]
+                },
+                prayers: {
+                    title: '🤲 الأدعية',
+                    items: [
+                        { id: 1, text: 'ادعي لنا بالحب والسعادة', icon: '🙏' },
+                        { id: 2, text: 'ادعي بجميل يا حبيبتي', icon: '✨' },
+                        { id: 3, text: 'ما دعاؤك لنا؟', icon: '💫' },
+                    ]
+                },
+                messages: {
+                    title: '💌 الرسائل',
+                    items: [
+                        { id: 1, text: 'قولي لي شيء خاص جداً', icon: '💬' },
+                        { id: 2, text: 'ما الذي تودين قوله لي؟', icon: '💕' },
+                        { id: 3, text: 'أجمل شيء فيك؟', icon: '✨' },
+                    ]
+                }
+            };
+
+            return (
+                <div className="app">
+                    <div className="blob-bg"></div>
+                    <div className="blob-bg-2"></div>
+                    <div className="container">
+                        <button className="back-btn" onClick={() => setScreen('choice')}>← رجوع</button>
+                        <div className="header">
+                            <h1>🌹 يا مريم الحلوة 🌹</h1>
+                            <p>أجيبي على الأسئلة والألغاز والتحديات!</p>
+                        </div>
+
+                        {showSuccess && <div className="success-message">✅ تم إرسال إجابتك! الحمد لله 💕</div>}
+
+                        <div className="nav">
+                            {Object.keys(sections).map(key => (
+                                <button
+                                    key={key}
+                                    className={`nav-btn ${activeTab === key ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(key)}
+                                >
+                                    {sections[key].title}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="main-content">
+                            <div className="grid">
+                                {sections[activeTab].items.map(item => (
+                                    <div key={item.id} className="card">
+                                        <div className="card-icon">{item.icon}</div>
+                                        <h3>{item.text}</h3>
+                                        <textarea
+                                            placeholder="اكتبي إجابتك هنا..."
+                                            value={answers[item.id] || ''}
+                                            onChange={(e) => setAnswers({ ...answers, [item.id]: e.target.value })}
+                                        ></textarea>
+                                        <button 
+                                            className="submit-btn"
+                                            style={{ marginTop: '15px' }}
+                                            onClick={() => {
+                                                if (answers[item.id]) {
+                                                    onAddResponse(item.text, answers[item.id]);
+                                                    setAnswers({ ...answers, [item.id]: '' });
+                                                }
+                                            }}
+                                        >
+                                            ✉️ أرسلي الإجابة
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="info-cards">
+                            <div className="info-card">
+                                <h4>💖 عن التطبيق</h4>
+                                <p>هذا التطبيق يجمع كل أسئلتي وحبي لك!</p>
+                            </div>
+                            <div className="info-card">
+                                <h4>✨ بدون قلق</h4>
+                                <p>كل إجاباتك محفوظة وآمنة معي!</p>
+                            </div>
+                            <div className="info-card">
+                                <h4>💕 من قلبي</h4>
+                                <p>كل كلمة من هنا بحب وصدق!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function AdminPanel({ responses, setScreen }) {
+            return (
+                <div className="app">
+                    <div className="blob-bg"></div>
+                    <div className="blob-bg-2"></div>
+                    <div className="container">
+                        <button className="back-btn" onClick={() => setScreen('choice')}>← رجوع</button>
+                        <div className="header">
+                            <h1>👑 لوحة أمير 👑</h1>
+                            <p>إجابات مريم الغالية 💕</p>
+                        </div>
+
+                        <div className="admin-panel">
+                            <h2 style={{ marginBottom: '30px', color: '#667eea' }}>
+                                📬 عدد الإجابات: {responses.length}
+                            </h2>
+
+                            {responses.length === 0 ? (
+                                <p style={{ textAlign: 'center', color: '#999', fontSize: '18px' }}>
+                                    لا توجد إجابات حتى الآن... انتظر مريم 💕
+                                </p>
+                            ) : (
+                                <div className="responses-list">
+                                    {responses.map(response => (
+                                        <div key={response.id} className="response-item">
+                                            <h4>❓ {response.question}</h4>
+                                            <p><strong>✍️ الإجابة:</strong></p>
+                                            <p style={{ whiteSpace: 'pre-wrap', marginBottom: '10px' }}>{response.answer}</p>
+                                            <div className="time">⏰ {response.timestamp}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="info-cards" style={{ marginTop: '30px' }}>
+                            <div className="info-card">
+                                <h4>💕 كل إجابة بحب</h4>
+                                <p>كل جواب من مريم يستحق قيمة الذهب!</p>
+                            </div>
+                            <div className="info-card">
+                                <h4>🌹 محفوظة آمنة</h4>
+                                <p>جميع الإجابات محفوظة بأمان عندك!</p>
+                            </div>
+                            <div className="info-card">
+                                <h4>✨ من القلب</h4>
+                                <p>كل كلمة تعكس حب وتفاني!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
